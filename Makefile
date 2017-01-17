@@ -20,7 +20,11 @@ snake: $(OBJ) $(HEAD)
 
 # delete all object files and the binary
 clean:
-	rm snake *.o
+	rm -f snake *.o
+	
+# run the binary
+run:
+	./snake
 
 # pattern rule to compile .c files into .o files with the same name
 %.o: %.c
