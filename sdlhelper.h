@@ -3,6 +3,10 @@
 
 #include "snake.h"
 
+// Return values of initsdl and addbmpsdl:
+// 0: everything went fine
+// 1: error
+
 int initsdl(struct properties* props);
 int addbmpsdl(struct properties* props, char *file,
 				unsigned int xpos, unsigned int ypos,

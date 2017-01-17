@@ -6,6 +6,8 @@
 #include "snake.h"
 #include "sdlhelper.h"
 
+// This function initializes SDL, creates window and renderer and sets
+// the window icon (very important! :)).
 int initsdl(struct properties* props) {
 	// initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -39,6 +41,18 @@ int initsdl(struct properties* props) {
 		return 1;
 	}
 	
+	// set the window icon
+	SDL_Surface *iconsurface;
+	
+	// load the icon into a surface
+	iconsurface = SDL_LoadBMP("img/snake.bmp");
+	if(iconsurface == NULL) {
+		printf("SDL_LoadBMP Error: %s\n", SDL_GetError());
+		return 1;
+	}
+	SDL_SetWindowIcon(props->win, iconsurface);
+	SDL_FreeSurface(iconsurface); // the surface is not needed anymore
+	
 	// everything went smoothly
 	return 0;
 }
@@ -46,33 +60,34 @@ int initsdl(struct properties* props) {
 int addbmpsdl(struct properties *props, char *file, 
 				unsigned int xpos, unsigned int ypos,
 				unsigned int xsize, unsigned int ysize) {
-	SDL_Surface *surf;
-	SDL_Texture *tex;
+	SDL_Surface *bmpsurface;
+	SDL_Texture *bmptexture;
 	
-	SDL_Rect destR ;
-	destR.x = xpos;
-	destR.y = ypos;
-	destR.w = xsize;
-	destR.h = ysize;
+	// rectangle with the size and position of the BMP
+	SDL_Rect bmprect;
+	bmprect.x = xpos;
+	bmprect.y = ypos;
+	bmprect.w = xsize;
+	bmprect.h = ysize;
 	
 	// load BMP into a new surface
-	surf = SDL_LoadBMP(file); 
-	if(surf == NULL) {
+	bmpsurface = SDL_LoadBMP(file); 
+	if(bmpsurface == NULL) {
 		printf("SDL_LoadBMP Error: %s\n", SDL_GetError());
 		return 1;
 	}
 	
 	// create a texture from the surface
-	tex = SDL_CreateTextureFromSurface(props->ren, surf);
-	if(tex == NULL) {
+	bmptexture = SDL_CreateTextureFromSurface(props->ren, bmpsurface);
+	if(bmptexture == NULL) {
 		printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
 		return 1;
 	}
 	
 	// the surface is not needed anymore, so we can free it
-	SDL_FreeSurface(surf);
+	SDL_FreeSurface(bmpsurface);
 	
-	if(SDL_RenderCopy(props->ren, tex, NULL, &destR) != 0) {
+	if(SDL_RenderCopy(props->ren, bmptexture, NULL, &bmprect) != 0) {
 		printf("SDL_RenderCopy Error: %s\n", SDL_GetError());
 		return 1;
 	}
