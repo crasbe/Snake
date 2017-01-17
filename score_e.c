@@ -41,7 +41,7 @@ void sortieren(struct sScore *highscorearray){
 void schreiben(struct sScore *highscorearray){
     FILE *Fhighscore;
     char zahl[30];
-    Fhighscore = fopen("/Users/Evgenij/Documents/highscore/highscore/highscore.txt", "w");      //path is incorrect
+    Fhighscore = fopen("/Users/Evgenij/Documents/highscore/highscore/highscore_e.txt", "w");      //path is incorrect
     for (int i = 0;i < 10;i++){
         fprintf(Fhighscore,"%05d ",highscorearray[i].punkte);
         fprintf(Fhighscore,"%-20s",highscorearray[i].name);
@@ -56,7 +56,7 @@ void schreiben(struct sScore *highscorearray){
 void dateiAuslesen(struct sScore *highscorearray){
     char c[50];
     FILE *Fhighscore;
-    Fhighscore = fopen("/Users/Evgenij/Documents/highscore/highscore/highscore.txt", "r");      //path is incorrect
+    Fhighscore = fopen("/Users/Evgenij/Documents/highscore/highscore/highscore_e.txt", "r");      //path is incorrect
 
     for (int i= 0;i<10;i++){
         if (fgets(c, 27, Fhighscore)==NULL) break;
@@ -66,24 +66,48 @@ void dateiAuslesen(struct sScore *highscorearray){
 
 
 }
+//void neusortieren(struct sScore *highscorearray,char *Name){
+  //  int index=-1;
+  //  int value=-1;
+   // for (int i = 0; i<9;i++){
+    //    printf("%d\n",highscorearray[i].punkte); ////////Probelm hier Lasse mach!!
+      //  if ((highscorearray[i].punkte <= highscorearray[i+1].punkte)){
+       //     index = i;
+        //    printf("%d !",index);
+   //     }
+   // }
+  //  if (index>=0){
+    //    if ((highscorearray[index].punkte <= props->score)){
+      //      highscorearray[index].punkte = props->score;
+        //    strcpy(highscorearray[index].name,Name);
+    //        printf("1");
+    //    }
+  //  }
+  //  sortieren(highscorearray);
+//}
 void neusortieren(struct sScore *highscorearray,char *Name){
-    int index=-1;
-    int value=-1;
-    for (int i = 0; i<9;i++){
-        printf("%d\n",highscorearray[i].punkte); ////////Probelm hier Lasse mach!!
-        if ((highscorearray[i].punkte <= highscorearray[i+1].punkte)){
-            index = i;
-            printf("%d !",index);
-        }
+    int n= 10,c ,d, swap;
+    for (c = 0; c < n; c++)
+        scanf("%d", highscorearray[i].punkte);
+
+
+  for (c = 0 ; c < ( n - 1 ); c++)
+  {
+    for (d = 0 ; d < n - c - 1; d++)
+    {
+      if (highscorearray[d].punkte > highscorearray[d+1].punkte) /* For decreasing order use < */
+      {
+        swap       = array[d];
+        array[d]   = array[d+1];
+        array[d+1] = swap;
+      }
     }
-    if (index>=0){
-        if ((highscorearray[index].punkte <= props->score)){
-            highscorearray[index].punkte = props->score;
-            strcpy(highscorearray[index].name,Name);
-            printf("1");
-        }
-    }
-    sortieren(highscorearray);
+  }
+
+  printf("Sorted list in ascending order:\n");
+
+  for ( c = 0 ; c < n ; c++ )
+     printf("%d\n",highscorearray[c]);
 }
 
 int main(int argc, const char * argv[]) {
