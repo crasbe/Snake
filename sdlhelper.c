@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #include <SDL2/SDL.h>
@@ -40,6 +41,9 @@ int initsdl(struct properties* props) {
 		SDL_Quit();
 		return 1;
 	}
+	
+	fillallsdl(props, 0xFFFFFFFF); // white background with no alpha
+	
 	
 	// set the window icon
 	SDL_Surface *iconsurface;
@@ -91,6 +95,23 @@ int addbmpsdl(struct properties *props, char *file,
 		printf("SDL_RenderCopy Error: %s\n", SDL_GetError());
 		return 1;
 	}
+	SDL_RenderPresent(props->ren);
+	
+	return 0;
+}
+
+int fillallsdl(struct properties *props, uint32_t argb) {
+	// blue has to be rshifted 0 bits (rightmost in argb already)
+	// green has to be rshifted 8 bits
+	// red has to be rshifted 16 bits
+	// alpha has to be rshifted 24 bits (leftmost in argb)
+	// mask with 0xFF to keep only the rightmost 8 bits
+	if(SDL_SetRenderDrawColor(props->ren, (argb>>16)&0xFF, (argb>>8)&0xFF, 
+										argb&0xFF, (argb>>24)&0xFF) != 0) {
+		printf("SDL_SetRenderDrawColor Error: %s\n", SDL_GetError());
+		return 1;
+	}
+	SDL_RenderClear(props->ren);
 	SDL_RenderPresent(props->ren);
 	
 	return 0;
