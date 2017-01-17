@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -std=c99
 LDFLAGS = -lSDL2main -lSDL2
 
 # specify every .c (or later .o) file as dependency

@@ -1,3 +1,7 @@
+/****************************************
+ * This header contains the main structure
+ * and function prototypes for the modules.
+ ****************************************/
 #ifndef SNAKE_H_
 #define SNAKE_H_
 
@@ -11,14 +15,15 @@
  
 struct properties {
 	// Window properties
-	unsigned int x;
-	unsigned int y;
-	SDL_Window *win;
-	SDL_Renderer *ren;
+	unsigned int x;		// X-size of the window
+	unsigned int y;		// Y-size of the window
+	SDL_Window *win;	// SDL-Window
+	SDL_Renderer *ren;	// SDL-Renderer
 	
-	unsigned int l;
-	unsigned int v;
-	unsigned int score;
+	// Game properties
+	unsigned int l;		// snake length to be reached to win
+	unsigned int v;		// velocity of the snake. this defines t
+	unsigned int score;	// reached score of the last game
 };
 
 /****************************************
