@@ -22,7 +22,7 @@ int initsdl(struct properties* props) {
 									props->x, props->y, 
 									SDL_WINDOW_SHOWN);
 	if (props->win == NULL) {
-		printf("SDL_CreateWindow: %s\n", SDL_GetError());
+		printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
 		SDL_Quit();
 		return 1;
 	}
@@ -40,6 +40,44 @@ int initsdl(struct properties* props) {
 	}
 	
 	// everything went smoothly
+	return 0;
+}
+
+int addbmpsdl(struct properties *props, char *file, 
+				unsigned int xpos, unsigned int ypos,
+				unsigned int xsize, unsigned int ysize) {
+	SDL_Surface *surf;
+	SDL_Texture *tex;
+	
+	SDL_Rect destR ;
+	destR.x = xpos;
+	destR.y = ypos;
+	destR.w = xsize;
+	destR.h = ysize;
+	
+	// load BMP into a new surface
+	surf = SDL_LoadBMP(file); 
+	if(surf == NULL) {
+		printf("SDL_LoadBMP Error: %s\n", SDL_GetError());
+		return 1;
+	}
+	
+	// create a texture from the surface
+	tex = SDL_CreateTextureFromSurface(props->ren, surf);
+	if(tex == NULL) {
+		printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
+		return 1;
+	}
+	
+	// the surface is not needed anymore, so we can free it
+	SDL_FreeSurface(surf);
+	
+	if(SDL_RenderCopy(props->ren, tex, NULL, &destR) != 0) {
+		printf("SDL_RenderCopy Error: %s\n", SDL_GetError());
+		return 1;
+	}
+	SDL_RenderPresent(props->ren);
+	
 	return 0;
 }
 
