@@ -4,6 +4,8 @@ LDFLAGS = -lSDL2main -lSDL2
 
 # specify every .c (or later .o) file as dependency
 OBJ := $(patsubst %.c,%.o,$(wildcard *.c))
+# the headers are also necessary
+HEAD = snake.h sdlhelper.h
 
 # those object are the only ones to be linked
 snake: LDOBJ = snake.o sdlhelper.o
@@ -13,7 +15,7 @@ snake: LDOBJ += score_$(shell bash -c 'read -p "Score module [c,e,l]? " score; e
 
 # By setting all .o files from every .c file as dependency
 # every .c file will be compiled by the pattern rule
-snake: $(OBJ)
+snake: $(OBJ) $(HEAD)
 	$(CC) $(CFLAGS) -o snake $(LDOBJ) $(LDFLAGS)
 
 # delete all object files and the binary
