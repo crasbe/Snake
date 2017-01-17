@@ -4,6 +4,7 @@
 #include "snake.h"
 
 int initsdl(struct properties* props);
+void cleanupsdl(struct properties* props);
 
 
 #endif // SDLHELPER_H_

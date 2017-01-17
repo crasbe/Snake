@@ -28,6 +28,6 @@ int main(void) {
 		SDL_Delay(16);
 	}
 
-
+	cleanupsdl(props);
 	return 0;
 }

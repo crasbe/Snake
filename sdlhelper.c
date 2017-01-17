@@ -42,3 +42,10 @@ int initsdl(struct properties* props) {
 	// everything went smoothly
 	return 0;
 }
+
+// cleanup in the end
+void cleanupsdl(struct properties *props) {
+	SDL_DestroyRenderer(props->ren);
+	SDL_DestroyWindow(props->win);
+	SDL_Quit();
+}
