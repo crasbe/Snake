@@ -66,7 +66,7 @@ void dateiAuslesen(struct sScore *highscorearray){
 
 
 }
-//void neusortieren(struct sScore *highscorearray,char *Name){
+//void neusortieren(struct sScore *highscorearray,char *Name){                  old version saved in case of bugs with the new one
   //  int index=-1;
   //  int value=-1;
    // for (int i = 0; i<9;i++){
@@ -85,29 +85,19 @@ void dateiAuslesen(struct sScore *highscorearray){
   //  }
   //  sortieren(highscorearray);
 //}
+
+
+
+
 void neusortieren(struct sScore *highscorearray,char *Name){
-    int n= 10,c ,d, swap;
-    for (c = 0; c < n; c++)
-        scanf("%d", highscorearray[i].punkte);
+    sortieren(highscorearray);
+        if ((highscorearray[10].punkte <= props->score)){
+            highscorearray[10].punkte = props->score;
+            strcpy(highscorearray[10].name,Name);
 
+            sortieren(highscorearray);
+        }
 
-  for (c = 0 ; c < ( n - 1 ); c++)
-  {
-    for (d = 0 ; d < n - c - 1; d++)
-    {
-      if (highscorearray[d].punkte > highscorearray[d+1].punkte) /* For decreasing order use < */
-      {
-        swap       = array[d];
-        array[d]   = array[d+1];
-        array[d+1] = swap;
-      }
-    }
-  }
-
-  printf("Sorted list in ascending order:\n");
-
-  for ( c = 0 ; c < n ; c++ )
-     printf("%d\n",highscorearray[c]);
 }
 
 int main(int argc, const char * argv[]) {
