@@ -36,8 +36,8 @@ void schreiben(struct sScore *highscorearray){
     char zahl[30];
     Fhighscore = fopen("/Users/Evgenij/Documents/highscore/highscore/highscore_e.txt", "w");      //path is incorrect
     for (int i = 0;i < 10;i++){
-        fprintf(Fhighscore,"%05d ",highscorearray[i].punkte);
-        fprintf(Fhighscore,"%-20s",highscorearray[i].name);
+        fprintf(Fhighscore,"%d, ",highscorearray[i].punkte);
+        fprintf(Fhighscore,"%s\n",highscorearray[i].name);
 
 
 
@@ -50,8 +50,7 @@ void dateiAuslesen(struct sScore *highscorearray){
     Fhighscore = fopen("/Users/Evgenij/Documents/highscore/highscore/highscore_e.txt", "r");      //path is incorrect
 
     for (int i= 0;i<10;i++){
-        if (fgets(c, 27, Fhighscore)==NULL) break;
-        sscanf(c, "%d %s",&highscorearray[i].punkte,highscorearray[i].name);
+        sscanf(c, "%d, %s",&highscorearray[i].punkte,highscorearray[i].name);
 }
     fclose(Fhighscore);
 
