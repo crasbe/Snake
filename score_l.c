@@ -31,7 +31,7 @@ void writeData(struct sScore *highscorearray, int length){      //works well
     FILE *Fhighscore;
     Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "w");      //path is incorrect
     for (int i = 0;i < length;i++){
-        fprintf(Fhighscore,"%i ",highscorearray[i].punkte);
+        fprintf(Fhighscore,"%i:",highscorearray[i].punkte);
         fprintf(Fhighscore,"%s \n",highscorearray[i].name);
     }
 }
@@ -45,7 +45,7 @@ void readData(struct sScore *highscorearray, int length){       //the problem is
     Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "w");      //path is incorrect
 
     while (fgets( line, length, Fhighscore ) !=0){
-        fscanf(Fhighscore,"%i %s \n",&highscorearray[count].punkte, &highscorearray[count].name);         count++;
+        fscanf(Fhighscore,"%i:%s",&highscorearray[count].punkte,highscorearray[count].name);         count++;
     }
     fclose(Fhighscore);
     for (int i=0;i<length;i++){                                                 //tool to test the funktion
