@@ -7,9 +7,17 @@
 #include "snake.h"
 #include "sdlhelper.h"
 
-// This function initializes SDL, creates window and renderer and sets
-// the window icon (very important! :)).
-int initsdl(struct properties* props) {
+/***********************************************************************
+ * initsdl:
+ *   This function initializes SDL, opens the window,
+ *   creates the renderer and sets the window icon (very important! :)).
+ * Arguments:
+ *   struct properties* props: a pointer to custom struct
+ * Return:
+ *   0: success
+ *   1: failure
+***********************************************************************/
+unsigned int initsdl(struct properties* props) {
 	// initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("SDL_Init Error: %s\n", SDL_GetError());	
@@ -61,9 +69,32 @@ int initsdl(struct properties* props) {
 	return 0;
 }
 
-int addbmpsdl(struct properties *props, char *file, 
+/***********************************************************************
+ * addbmpsdl:
+ *   This functions draws a BMP image in the window (overlay).
+ * Arguments:
+ *   struct properties* props: 	pointer to custom struct with window
+ * 								information
+ * 	 char* file: pointer to a string with the path
+ *   unsigned int xpos: X-position of the image
+ *   unsigned int ypos: Y-position of the image
+ *   unsigned int xsize: X-size of the image (width)
+ *   unsigned int ysize: Y-size of the image (height)
+ * Return:
+ *   0: success
+ *   1: failure
+ **********************************************************************/
+unsigned int addbmpsdl(struct properties* props, char* file, 
 				unsigned int xpos, unsigned int ypos,
 				unsigned int xsize, unsigned int ysize) {
+	if(xpos > props->x) {
+		printf("Error: xpos out of range: %d > %d\n", xpos, props->x);
+		return 1;
+	}
+	if(ypost > props->y) {
+		printf("Error: ypos out of range %d > %d\n", ypos, props->y);
+	}
+	
 	SDL_Surface *bmpsurface;
 	SDL_Texture *bmptexture;
 	
@@ -71,7 +102,7 @@ int addbmpsdl(struct properties *props, char *file,
 	SDL_Rect bmprect;
 	bmprect.x = xpos;
 	bmprect.y = ypos;
-	bmprect.w = xsize;
+	bmprect.w = xsize;		// TODO: read x and y size from BMP
 	bmprect.h = ysize;
 	
 	// load BMP into a new surface
@@ -100,7 +131,18 @@ int addbmpsdl(struct properties *props, char *file,
 	return 0;
 }
 
-int fillallsdl(struct properties *props, uint32_t argb) {
+/***********************************************************************
+ * fillallsdl:
+ *   Fills the whole window with one color.
+ * Arguments:
+ *   struct properties* props - pointer to custom struct with window
+ * 								information
+ *   uint32_t argb - Alpha, Red, Green, Blue
+ * Return:
+ *   0: success
+ *   1: failure
+ **********************************************************************/
+unsigned int fillallsdl(struct properties* props, uint32_t argb) {
 	// blue has to be rshifted 0 bits (rightmost in argb already)
 	// green has to be rshifted 8 bits
 	// red has to be rshifted 16 bits
@@ -114,6 +156,12 @@ int fillallsdl(struct properties *props, uint32_t argb) {
 	SDL_RenderClear(props->ren);
 	SDL_RenderPresent(props->ren);
 	
+	return 0;
+}
+
+unsigned int drawbordersdl(struct properties* props, uint32_t argb, unsigned int width) {
+	
+
 	return 0;
 }
 
