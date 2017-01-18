@@ -6,8 +6,10 @@
 #define namelength 20           // max length of playername
 #define scorelistlength 1000    //max length of scorelist
 
+#define MAX 25 // maximum line length
 
-struct properties* props; //ekeligg
+
+//struct properties* props; //ekeligg
 struct sScore{
     char name[namelength];
     int punkte;
@@ -27,83 +29,102 @@ void sort(struct sScore *highscorearray, int length){          //not tested, sam
     }
 }
 
-void writeData(struct sScore *highscorearray, int length){      //works well
-    FILE *Fhighscore;
-    Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "w");      //path is incorrect
+void writeData(struct sScore *highscorearray, int length, FILE* highscorefile){      //works well
+    //FILE *Fhighscore;
+    //Fhighscore = fopen("highscore_l.txt", "w");      //path is incorrect
     for (int i = 0;i < length;i++){
-        fprintf(Fhighscore,"%i:",highscorearray[i].punkte);
-        fprintf(Fhighscore,"%s \n",highscorearray[i].name);
+        fprintf(highscorefile,"%i:",highscorearray[i].punkte);
+        fprintf(highscorefile,"%s \n",highscorearray[i].name);
     }
+    
+    rewind(highscorefile);
 }
 
-void readData(struct sScore *highscorearray, int length){       //the problem ist to read the data
+void readData(struct sScore *highscorearray, FILE *highscorefile){       //the problem ist to read the data
 
-    FILE* Fhighscore;
-    char line[length];
+    //FILE* Fhighscore;
+    char line[MAX];
     int count = 0;
 
-    Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "w");      //path is incorrect
+    //Fhighscore = fopen("highscore_l.txt", "r");      //path is incorrect
 
-    while (fgets( line, length, Fhighscore ) !=0){
-        fscanf(Fhighscore,"%i:%s",&highscorearray[count].punkte,highscorearray[count].name);         count++;
+    while (fgets(line, MAX, highscorefile) !=0){
+        //fscanf(highscorefile,"%i:%s",&highscorearray[count].punkte,highscorearray[count].name);
+        sscanf(line, "%i:%s",&highscorearray[count].punkte, highscorearray[count].name);
+        count++;
     }
-    fclose(Fhighscore);
-    for (int i=0;i<length;i++){                                                 //tool to test the funktion
-        printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
-    }
+    //fclose(Fhighscore);
+    //for (int i=0;i<length;i++){                                                 //tool to test the funktion
+    //    printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
+    //}
+    
+    rewind(highscorefile); // back to start
+    
   }
 
 
-int countScores(){              //works well
+int countScores(FILE *highscorefile){              //works well
 
-    FILE* Fhighscore;
+    //FILE* Fhighscore;
 
     int count = 0;
     char line[scorelistlength];
 
 
-    Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "r");      //path is incorrect
+    //Fhighscore = fopen("highscore_l.txt", "r");      //path is incorrect
 
-    if (!Fhighscore){
+    if (!highscorefile){
         printf("Could not open highscore \n" );
         return -1;
     }
 
-    while (fgets( line, scorelistlength, Fhighscore ) != 0){
+    while (fgets( line, scorelistlength, highscorefile ) != 0){
         count++;
     }
 
     printf("%i\n",count);           // only for testing
-    return count ;
+    
+    rewind(highscorefile); // put curser back to start
+    
+    return count;
 }
 
-void writenewscore(struct sScore *highscorearray,char *Name, int length){   // dont know couse of problems with the r/w functions
-    highscorearray[length+1].punkte = props->score;
-    strcpy(highscorearray[length+1].name,Name);
+void writenewscore(struct sScore *highscorearray,char *Name, int length, int newscore){   // dont know couse of problems with the r/w functions
+    highscorearray[length].punkte = newscore;
+    strcpy(highscorearray[length].name,Name);
 
-    sort(highscorearray, length);
+    sort(highscorearray, length+1);
 }
 
-int main(int argc, const char * argv[]) {
+//int main(int argc, const char * argv[]) {
+int score(struct properties* props) {
+	FILE *highscorefile = fopen("highscore_l.txt", "r+");
+	
+	
     char Name[namelength];
     int length;
-    props = (struct properties*)malloc(sizeof(struct properties));
+    //props = (struct properties*)malloc(sizeof(struct properties));
     props->score = 20;
     printf("Enter your name:  ");
     scanf("%s",Name);
 
-    length = countScores();
+    length = countScores(highscorefile);
     if (length < 0){        // if the file could not be open end funktion
-        return 0;
+        return -1;
     }
 
-    struct sScore highscorearray[length+1];
-    readData(highscorearray,length);
-    writenewscore(highscorearray, Name,length);
-    writeData(highscorearray, length);
+    //struct sScore highscorearray[length+2];
+    struct sScore* highscorearray;
+    highscorearray = (struct sScore*)malloc((length+1)*sizeof(struct sScore));
+    
+    readData(highscorearray, highscorefile);
+    writenewscore(highscorearray, Name,length, props->score);
+    writeData(highscorearray, length+1, highscorefile);
 
-    //for (int i=0;i<length;i++){                                                 //tool to test the funktion
-     //   printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
-   // }
+    for (int i=0;i<length+1;i++){                                                 //tool to test the funktion
+		printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
+    }
+   
+   return -1;
 
 }
