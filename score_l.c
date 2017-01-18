@@ -4,11 +4,11 @@
 #include "snake.h"
 struct properties* props; //ekeligg
 struct sScore{
-    char name[20];
+    char name[40];
     int punkte;
 };
 
-void sortieren(struct sScore *highscorearray, int length){          //not tested, same as original(score_e.c)
+void sort(struct sScore *highscorearray, int length){          //not tested, same as original code(score_e.c)
     struct sScore tmp;
         for (int i = 0; i < length - 1; ++i)
         {
@@ -29,7 +29,7 @@ void writeData(struct sScore *highscorearray, int length){
     FILE *Fhighscore;
     Fhighscore = fopen("/Users/Evgenij/Documents/highscore/highscore/highscore_e.txt", "w");      //path is incorrect
     for (int i = 0;i < length;i++){
-        fprintf(Fhighscore,"%d: ",highscorearray[i].punkte);
+        fprintf(Fhighscore,"%d:",highscorearray[i].punkte);
         fprintf(Fhighscore,"%s \n",highscorearray[i].name);
 
 
@@ -79,22 +79,24 @@ void writenewscore(struct sScore *highscorearray,char *Name, int length){
             highscorearray[length+1].punkte = props->score;
             strcpy(highscorearray[length+1].name,Name);
 
-            sortieren(highscorearray);
+            sort(highscorearray);
         }
 
 }
 
 int main(int argc, const char * argv[]) {
     char Name[40];
+    int length
     props = (struct properties*)malloc(sizeof(struct properties));
-    props->score =19;
+    props->score =properties.score;
     printf("Enter your name:  ");
     scanf("%s",Name);
-    struct sScore highscorearray[countScores()+1];
+    length = countScores()
+    struct sScore highscorearray[length+1];
     readData()(highscorearray);
-    writenewscore(highscorearray, Name,countScores());
-    writeData()(highscorearray, countScores());
-    for (int i=0;i<10;i++){
+    writenewscore(highscorearray, Name,length));
+    writeData()(highscorearray, length);
+    for (int i=0;i<length;i++){
         printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
     }
 
