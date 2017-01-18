@@ -26,12 +26,12 @@ void writeData(struct sScore *highscorearray, int length){
     FILE *Fhighscore;
     Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "w");      //path is incorrect
     for (int i = 0;i < length;i++){
-        fprintf(Fhighscore,"%d:",highscorearray[i].punkte);
+        fprintf(Fhighscore,"%i ",highscorearray[i].punkte);
         fprintf(Fhighscore,"%s \n",highscorearray[i].name);
     }
 }
 
-void readData(struct sScore *highscorearray, int length){
+void readData(struct sScore *highscorearray, int length){       //the problem ist to read the data
 
     FILE* Fhighscore;
     char line[length];
@@ -40,10 +40,13 @@ void readData(struct sScore *highscorearray, int length){
     Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "w");      //path is incorrect
 
     while (fgets( line, length, Fhighscore )){
-        fscanf(Fhighscore, "%d:%s", highscorearray[count].punkte, highscorearray[count].name);      //warning %d expect argument of type int but argument 3 has type 'int'
+        fscanf(Fhighscore,"%i %s \n",highscorearray[count].punkte, highscorearray[count].name); //warning %d expect argument of type int* but argument 3 has type 'int'
         count++;
     }
     fclose(Fhighscore);
+    for (int i=0;i<length;i++){                                                 //tool to test the funktion
+        printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
+    }
   }
 
 
@@ -51,21 +54,22 @@ int countScores(){
 
     FILE* Fhighscore;
 
-    char line[1000];
     int count = 0, length = 1000;
+    char line[length];
+
 
     Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "r");      //path is incorrect
 
     if (!Fhighscore){
         printf("Could not open highscore \n" );
-        return 0;
+        return -1;
     }
 
-    while (fgets( line, length, Fhighscore )){
+    while (fgets( line, length, Fhighscore ) != 0){
         count++;
     }
 
-
+    printf("%i\n",count);           // only for testing
     return count ;
 }
 
@@ -83,14 +87,19 @@ int main(int argc, const char * argv[]) {
     props->score = 20;
     printf("Enter your name:  ");
     scanf("%s",Name);
+
     length = countScores();
+    if (length < 0){        // if the file could not be open end funktion
+        return 0;
+    }
+
     struct sScore highscorearray[length+1];
     readData(highscorearray,length);
     writenewscore(highscorearray, Name,length);
     writeData(highscorearray, length);
 
-    for (int i=0;i<length;i++){                                                 //tool to test the funktion
-        printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
-    }
+    //for (int i=0;i<length;i++){                                                 //tool to test the funktion
+     //   printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
+   // }
 
 }
