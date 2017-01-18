@@ -8,9 +8,7 @@ int menu(struct properties* props) {
 	
 	printf("Hier ist die Menu-Funktion!\n");
 	
-	addbmpsdl(props, "img/snake.bmp", 0, 0, 256, 256);
-	
-	SDL_Delay(4000);
+	addbmpsdl(props, "img/snake.bmp", 50, 50, 256, 256);
 	
 	return 1;
 }

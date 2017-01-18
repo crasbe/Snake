@@ -36,6 +36,8 @@ int main(void) {
 		else
 			printf("Illegal return value in main loop: %d!\n", nextop);
 	}
+	
+	SDL_Delay(4000);
 
 	cleanupsdl(props);
 	free(props);

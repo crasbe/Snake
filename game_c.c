@@ -11,9 +11,10 @@ struct snakestruct {
 	unsigned int x;
 	unsigned int y;
 	struct snakestruct* next;
-}
+};
 
 // function prototypes
+int createplayfield(struct properties* props);
 
 int game(struct properties* props) {
 	
@@ -24,7 +25,7 @@ int game(struct properties* props) {
 	
 	// allocate memory for the snakelist
 	struct snakestruct* snakelist;
-	snakelist = (struct snakestruct*)malloc(LEN_START*sizeof(struct snakestruct*));
+	snakelist = (struct snakestruct*)malloc(LEN_START*sizeof(struct snakestruct));
 	nose = snakelist; // point to first element
 	
 	// create a looped linear list
@@ -34,7 +35,7 @@ int game(struct properties* props) {
 		if(i == LEN_START-1)
 			snakelist[i].next = nose;
 		else
-			snakelist[i].next = snakelist[i+1];
+			snakelist[i].next = &snakelist[i+1];
 	}
 	
 	if(createplayfield(props) != 0) {
@@ -51,7 +52,11 @@ int game(struct properties* props) {
 
 // helper functions
 int createplayfield(struct properties* props) {
-	fillallsdl(props, 0xFFFFFFFF); // white background
+	fillallsdl(props, 0xFF999999); // white background
+
+	drawbordersdl(props, 0xFF990000, 8);
+	
+	drawrectsdl(props, 0xFF005500, 20, 20, 20, 20);
 
 	return 0;
 }
