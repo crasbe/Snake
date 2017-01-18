@@ -2,9 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include "snake.h"
+
+#define namelength 20           // max length of playername
+#define scorelistlength 1000    //max length of scorelist
+
+
 struct properties* props; //ekeligg
 struct sScore{
-    char name[40];
+    char name[namelength];
     int punkte;
 };
 
@@ -22,7 +27,7 @@ void sort(struct sScore *highscorearray, int length){          //not tested, sam
     }
 }
 
-void writeData(struct sScore *highscorearray, int length){
+void writeData(struct sScore *highscorearray, int length){      //works well
     FILE *Fhighscore;
     Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "w");      //path is incorrect
     for (int i = 0;i < length;i++){
@@ -39,9 +44,8 @@ void readData(struct sScore *highscorearray, int length){       //the problem is
 
     Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "w");      //path is incorrect
 
-    while (fgets( line, length, Fhighscore )){
-        fscanf(Fhighscore,"%i %s \n",highscorearray[count].punkte, highscorearray[count].name); //warning %d expect argument of type int* but argument 3 has type 'int'
-        count++;
+    while (fgets( line, length, Fhighscore ) !=0){
+        fscanf(Fhighscore,"%i %s \n",&highscorearray[count].punkte, &highscorearray[count].name);         count++;
     }
     fclose(Fhighscore);
     for (int i=0;i<length;i++){                                                 //tool to test the funktion
@@ -50,12 +54,12 @@ void readData(struct sScore *highscorearray, int length){       //the problem is
   }
 
 
-int countScores(){
+int countScores(){              //works well
 
     FILE* Fhighscore;
 
-    int count = 0, length = 1000;
-    char line[length];
+    int count = 0;
+    char line[scorelistlength];
 
 
     Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "r");      //path is incorrect
@@ -65,7 +69,7 @@ int countScores(){
         return -1;
     }
 
-    while (fgets( line, length, Fhighscore ) != 0){
+    while (fgets( line, scorelistlength, Fhighscore ) != 0){
         count++;
     }
 
@@ -73,7 +77,7 @@ int countScores(){
     return count ;
 }
 
-void writenewscore(struct sScore *highscorearray,char *Name, int length){
+void writenewscore(struct sScore *highscorearray,char *Name, int length){   // dont know couse of problems with the r/w functions
     highscorearray[length+1].punkte = props->score;
     strcpy(highscorearray[length+1].name,Name);
 
@@ -81,7 +85,7 @@ void writenewscore(struct sScore *highscorearray,char *Name, int length){
 }
 
 int main(int argc, const char * argv[]) {
-    char Name[40];
+    char Name[namelength];
     int length;
     props = (struct properties*)malloc(sizeof(struct properties));
     props->score = 20;
