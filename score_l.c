@@ -10,19 +10,16 @@ struct sScore{
 
 void sort(struct sScore *highscorearray, int length){          //not tested, same as original code(score_e.c)
     struct sScore tmp;
-        for (int i = 0; i < length - 1; ++i)
-        {
+    for (int i = 0; i < length - 1; ++i){
 
-            for (int j = 0; j < length - i - 1; ++j)
-            {
-                if (highscorearray[j].punkte < highscorearray[j + 1].punkte)
-                {
-                    tmp = highscorearray[j];
-                    highscorearray[j] = highscorearray[j+1];
-                    highscorearray[j+1] = tmp;
-                }
+        for (int j = 0; j < length - i - 1; ++j){
+            if (highscorearray[j].punkte < highscorearray[j + 1].punkte){
+                tmp = highscorearray[j];
+                highscorearray[j] = highscorearray[j+1];
+                highscorearray[j+1] = tmp;
             }
         }
+    }
 }
 
 void writeData(struct sScore *highscorearray, int length){
@@ -31,29 +28,25 @@ void writeData(struct sScore *highscorearray, int length){
     for (int i = 0;i < length;i++){
         fprintf(Fhighscore,"%d:",highscorearray[i].punkte);
         fprintf(Fhighscore,"%s \n",highscorearray[i].name);
-
-
-
-
     }
 }
 
 void readData(struct sScore *highscorearray, int length){
-  {
-  FILE* Fhighscore;
-  char line[length];
-  int count = 0;
 
-  f = fopen("/Users/Evgenij/Documents/highscore/highscore/highscore_e.txt", "w");      //path is incorrect
+    FILE* Fhighscore;
+    char line[length];
+    int count = 0;
 
-  while (fgets( line, length, Fhighscore )){
-    fscanf(Fhighscore, "%d:%s", highscorearray[count].score, highscorearray[count].name);
-    count++
+    f = fopen("/Users/Evgenij/Documents/highscore/highscore/highscore_e.txt", "w");      //path is incorrect
+
+    while (fgets( line, length, Fhighscore )){
+        fscanf(Fhighscore, "%d:%s", highscorearray[count].score, highscorearray[count].name);
+        count++
     }
-  fclose( f );
-  return 0;
+    fclose( f );
+    return 0;
   }
-  }
+
 
 int countScores(){
 
@@ -76,12 +69,10 @@ int countScores(){
 }
 
 void writenewscore(struct sScore *highscorearray,char *Name, int length){
-            highscorearray[length+1].punkte = props->score;
-            strcpy(highscorearray[length+1].name,Name);
+    highscorearray[length+1].punkte = props->score;
+    strcpy(highscorearray[length+1].name,Name);
 
-            sort(highscorearray);
-        }
-
+    sort(highscorearray);
 }
 
 int main(int argc, const char * argv[]) {
@@ -96,7 +87,8 @@ int main(int argc, const char * argv[]) {
     readData()(highscorearray);
     writenewscore(highscorearray, Name,length));
     writeData()(highscorearray, length);
-    for (int i=0;i<length;i++){
+
+    for (int i=0;i<length;i++){                                                 //tool to test the funktion
         printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
     }
 
