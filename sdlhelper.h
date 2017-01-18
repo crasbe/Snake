@@ -15,6 +15,9 @@ extern unsigned int addbmpsdl(struct properties* props, char *file,
 								unsigned int xsize, unsigned int ysize);
 extern unsigned int fillallsdl(struct properties* props, uint32_t argb);
 extern unsigned int drawbordersdl(struct properties* props, uint32_t argb, unsigned int width);
+extern unsigned int drawrectsdl(struct properties* props, uint32_t argb,
+								unsigned int xpos, unsigned int ypos,
+								unsigned int xsize, unsigned int ysize);
 extern void cleanupsdl(struct properties* props);
 
 

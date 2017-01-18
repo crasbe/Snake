@@ -7,6 +7,24 @@
 #include "snake.h"
 #include "sdlhelper.h"
 
+// private functions
+unsigned int setdrawcolor(SDL_Renderer* ren, uint32_t argb) {
+	// blue has to be rshifted 0 bits (rightmost in argb already)
+	// green has to be rshifted 8 bits
+	// red has to be rshifted 16 bits
+	// alpha has to be rshifted 24 bits (leftmost in argb)
+	// mask with 0xFF to keep only the rightmost 8 bits
+	if(SDL_SetRenderDrawColor(ren, (argb>>16)&0xFF, (argb>>8)&0xFF, 
+								argb&0xFF, (argb>>24)&0xFF) != 0) {
+		printf("SDL_SetRenderDrawColor Error: %s\n", SDL_GetError());
+		return 1;
+	} else
+		return 0;
+}
+
+
+// regular functions
+
 /***********************************************************************
  * initsdl:
  *   This function initializes SDL, opens the window,
@@ -91,7 +109,7 @@ unsigned int addbmpsdl(struct properties* props, char* file,
 		printf("Error: xpos out of range: %d > %d\n", xpos, props->x);
 		return 1;
 	}
-	if(ypost > props->y) {
+	if(ypos > props->y) {
 		printf("Error: ypos out of range %d > %d\n", ypos, props->y);
 	}
 	
@@ -143,14 +161,7 @@ unsigned int addbmpsdl(struct properties* props, char* file,
  *   1: failure
  **********************************************************************/
 unsigned int fillallsdl(struct properties* props, uint32_t argb) {
-	// blue has to be rshifted 0 bits (rightmost in argb already)
-	// green has to be rshifted 8 bits
-	// red has to be rshifted 16 bits
-	// alpha has to be rshifted 24 bits (leftmost in argb)
-	// mask with 0xFF to keep only the rightmost 8 bits
-	if(SDL_SetRenderDrawColor(props->ren, (argb>>16)&0xFF, (argb>>8)&0xFF, 
-										argb&0xFF, (argb>>24)&0xFF) != 0) {
-		printf("SDL_SetRenderDrawColor Error: %s\n", SDL_GetError());
+	if(setdrawcolor(props->ren, argb) == 1) {
 		return 1;
 	}
 	SDL_RenderClear(props->ren);
@@ -159,13 +170,75 @@ unsigned int fillallsdl(struct properties* props, uint32_t argb) {
 	return 0;
 }
 
+/***********************************************************************
+ * drawboardersdl:
+ *   Draws a border in the window area.
+ * Arguments:
+ *   struct properties* props - pointer to custom struct
+ *   uint32_t argb - color of the border. Alpha, Red, Green, Blue
+ *   unsigned int width - width of the border
+ * Return:
+ *   0: success
+ *   1: failure
+ **********************************************************************/
 unsigned int drawbordersdl(struct properties* props, uint32_t argb, unsigned int width) {
+	// draw from upper left corner to lower left corner
+	drawrectsdl(props, argb, 0, 0, width, props->y);
 	
+	// draw from upper left corner to upper right corner
+	drawrectsdl(props, argb, 0, 0, props->x, width);
+	
+	// draw from lower left corner to lower right corner
+	drawrectsdl(props, argb, 0, props->y-width, props->x, width);
+	
+	// draw from upper right corner to lower right corner
+	drawrectsdl(props, argb, props->x-width, 0, width, props->y);
 
 	return 0;
 }
 
-// cleanup in the end
+/***********************************************************************
+ * drawrectsdl:
+ *   Draws a rectangle.
+ * Arguments:
+ *   struct properties* props - you've guessed it...
+ *   uint32_t argb - color, Alpha, Red, Green, Blue
+ *   unsigned int xpos - X-Position
+ *   unsigned int ypos - Y-Position
+ *   unsigned int xsize - X-Size (width)
+ *   unsigned int ysize - Y-Size (height)
+ * Return:
+ *   0: success
+ *   1: Failure 
+ **********************************************************************/
+unsigned int drawrectsdl(struct properties* props, uint32_t argb,
+						unsigned int xpos, unsigned int ypos,
+						unsigned int xsize, unsigned int ysize) {
+	if(setdrawcolor(props->ren, argb) == 1) {
+		return 1;
+	}
+	
+	SDL_Rect rect;
+	rect.x = xpos;
+	rect.y = ypos;
+	rect.w = xsize;
+	rect.h = ysize;
+	SDL_RenderFillRect(props->ren, &rect);
+	
+	SDL_RenderPresent(props->ren);
+	
+	return 0;
+}
+
+
+/***********************************************************************
+ * cleanupsdl:
+ *   Partying is fun but someone has to clean up the mess.
+ * Arguments:
+ *   struct properties* props - yeah...
+ * Return:
+ *   void 
+ **********************************************************************/
 void cleanupsdl(struct properties *props) {
 	SDL_DestroyRenderer(props->ren);
 	SDL_DestroyWindow(props->win);
