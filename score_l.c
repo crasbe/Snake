@@ -40,11 +40,10 @@ void readData(struct sScore *highscorearray, int length){
     Fhighscore = fopen("/home/arkantdos/Desktop/Snake/highscore_l.txt", "w");      //path is incorrect
 
     while (fgets( line, length, Fhighscore )){
-        fscanf(Fhighscore, "%d:%s", highscorearray[count].punkte, highscorearray[count].name);
+        fscanf(Fhighscore, "%d:%s", highscorearray[count].punkte, highscorearray[count].name);      //warning %d expect argument of type int but argument 3 has type 'int'
         count++;
     }
     fclose(Fhighscore);
-    return 0;
   }
 
 
