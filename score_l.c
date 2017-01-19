@@ -5,7 +5,6 @@
 
 #define namelength 20           // max length of playername
 #define scorelistlength 1000    //max length of scorelist
-
 #define MAX 25 // maximum line length
 
 
@@ -36,7 +35,7 @@ void writeData(struct sScore *highscorearray, int length, FILE* highscorefile){ 
         fprintf(highscorefile,"%i:",highscorearray[i].punkte);
         fprintf(highscorefile,"%s \n",highscorearray[i].name);
     }
-    
+
     rewind(highscorefile);
 }
 
@@ -57,9 +56,9 @@ void readData(struct sScore *highscorearray, FILE *highscorefile){       //the p
     //for (int i=0;i<length;i++){                                                 //tool to test the funktion
     //    printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
     //}
-    
+
     rewind(highscorefile); // back to start
-    
+
   }
 
 
@@ -75,7 +74,7 @@ int countScores(FILE *highscorefile){              //works well
 
     if (!highscorefile){
         printf("Could not open highscore \n" );
-        return -1;
+        return -2;
     }
 
     while (fgets( line, scorelistlength, highscorefile ) != 0){
@@ -83,15 +82,15 @@ int countScores(FILE *highscorefile){              //works well
     }
 
     printf("%i\n",count);           // only for testing
-    
+
     rewind(highscorefile); // put curser back to start
-    
+
     return count;
 }
 
 void writenewscore(struct sScore *highscorearray,char *Name, int length, int newscore){   // dont know couse of problems with the r/w functions
-    highscorearray[length].punkte = newscore;
-    strcpy(highscorearray[length].name,Name);
+    highscorearray[length -1].punkte = newscore;
+    strcpy(highscorearray[length -1].name,Name);
 
     sort(highscorearray, length+1);
 }
@@ -99,32 +98,32 @@ void writenewscore(struct sScore *highscorearray,char *Name, int length, int new
 //int main(int argc, const char * argv[]) {
 int score(struct properties* props) {
 	FILE *highscorefile = fopen("highscore_l.txt", "r+");
-	
-	
+
+
     char Name[namelength];
     int length;
     //props = (struct properties*)malloc(sizeof(struct properties));
-    props->score = 20;
+    props->score = 20;                  // need the real score form game.c
     printf("Enter your name:  ");
     scanf("%s",Name);
 
-    length = countScores(highscorefile);
+    length = countScores(highscorefile) +1;
     if (length < 0){        // if the file could not be open end funktion
         return -1;
     }
 
     //struct sScore highscorearray[length+2];
     struct sScore* highscorearray;
-    highscorearray = (struct sScore*)malloc((length+1)*sizeof(struct sScore));
-    
+    highscorearray = (struct sScore*)malloc((length)*sizeof(struct sScore));
+
     readData(highscorearray, highscorefile);
     writenewscore(highscorearray, Name,length, props->score);
-    writeData(highscorearray, length+1, highscorefile);
+    writeData(highscorearray, length, highscorefile);
 
-    for (int i=0;i<length+1;i++){                                                 //tool to test the funktion
+    for (int i=0;i<length;i++){                                                 //tool to test the funktion
 		printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
     }
-   
+
    return -1;
 
 }
