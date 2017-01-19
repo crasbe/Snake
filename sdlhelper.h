@@ -18,6 +18,9 @@ extern unsigned int drawbordersdl(struct properties* props, uint32_t argb, unsig
 extern unsigned int drawrectsdl(struct properties* props, uint32_t argb,
 								unsigned int xpos, unsigned int ypos,
 								unsigned int xsize, unsigned int ysize);
+extern unsigned int drawframesdl(struct properties* props, uint32_t argb, unsigned int width,
+									unsigned int x1, unsigned int y1,
+									unsigned int x2, unsigned int y2);
 extern void cleanupsdl(struct properties* props);
 
 

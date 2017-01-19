@@ -182,7 +182,7 @@ unsigned int fillallsdl(struct properties* props, uint32_t argb) {
  *   1: failure
  **********************************************************************/
 unsigned int drawbordersdl(struct properties* props, uint32_t argb, unsigned int width) {
-	// draw from upper left corner to lower left corner
+/*	// draw from upper left corner to lower left corner
 	drawrectsdl(props, argb, 0, 0, width, props->y);
 	
 	// draw from upper left corner to upper right corner
@@ -194,7 +194,44 @@ unsigned int drawbordersdl(struct properties* props, uint32_t argb, unsigned int
 	// draw from upper right corner to lower right corner
 	drawrectsdl(props, argb, props->x-width, 0, width, props->y);
 
-	return 0;
+	return 0;*/
+	
+	return drawframesdl(props, argb, width, 0, 0, props->x, props->y);
+}
+
+/***********************************************************************
+ * drawframesdl:
+ *   Draws a frame in the window area.
+ * Arguments:
+ *   struct properties* props - pointer to custom struct
+ *   uint32_t argb - color of the border. Alpha, Red, Green, Blue
+ *   unsigned int width - width of the border
+ *   unsigned int x1 - X-Position of the upper left corner
+ *   unsigned int y1 - Y-Position of the upper left corner
+ *   unsigned int x2 - X-Position of the lower right corner
+ *   unsigned int y2 - Y-Position of the lower left corner
+ * Return:
+ *   0: success
+ *   1 or more: failure
+ **********************************************************************/
+unsigned int drawframesdl(struct properties* props, uint32_t argb, unsigned int width,
+						unsigned int x1, unsigned int y1,
+						unsigned int x2, unsigned int y2) {
+	unsigned int ret = 0;
+	
+	// draw from upper left corner to lower left corner
+	ret += drawrectsdl(props, argb, x1, y1, width, y2-y1);
+	
+	// draw from upper left corner to upper right corner
+	ret += drawrectsdl(props, argb, x1, y1, x2-x1, width);
+	
+	// draw from lower left corner to lower right corner
+	ret += drawrectsdl(props, argb, x1, y2-width, x2-x1, width);
+	
+	// draw from upper right corner to lower right corner
+	ret += drawrectsdl(props, argb, x2-x1-width, y1, width, y2-y1);
+	
+	return ret;
 }
 
 /***********************************************************************
