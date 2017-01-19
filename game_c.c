@@ -11,7 +11,7 @@
 #define TILE_Y 16
 
 #define BORDERCOL 0xFF990000
-#define BORDERWIDTH (TILE_X/2)
+#define BORDERWIDTH (TILE_X)
 
 #define BACKGROUNDCOL 0xFF999999
 
@@ -111,6 +111,8 @@ unsigned int placerandomfood(struct properties* props, struct foodstruct* food) 
 	
 	food->x = rand() % (props->x / TILE_X)+TILE_X;
 	food->y = rand() % (props->y / TILE_Y)+TILE_Y;
+	
+	// TODO: don't override snake!
 	
 	return drawrectsdl(props, FOODCOL, food->x, food->y, TILE_X, TILE_Y);
 }
