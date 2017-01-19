@@ -27,7 +27,7 @@ struct snakestruct {
 	unsigned int x;
 	unsigned int y;
 	bool nose;
-	struct snakestruct* next;
+	struct snakestruct* next; // nose points to last element
 };
 
 // structure for the food to be collected
@@ -40,7 +40,9 @@ struct foodstruct {
 unsigned int createplayfield(struct properties* props);
 unsigned int drawsnakepiece(struct properties* props,  
 							struct snakestruct* snakepiece);
-unsigned int placerandomfood(struct properties* props, struct foodstruct* food);
+unsigned int placerandomfood(struct properties* props, 
+							 struct foodstruct* food,
+							 struct snakestruct* snakelist);
 
 int game(struct properties* props) {
 	
@@ -78,13 +80,15 @@ int game(struct properties* props) {
 	
 	struct foodstruct* food = (struct foodstruct*)malloc(sizeof(struct foodstruct));
 	
-	placerandomfood(props, food);
+	placerandomfood(props, food, snakelist);
 	
 	
 	printf("Hier ist die Game-Funktion!\n");
 	
 	SDL_Delay(6000);
 	
+	
+	free(snakelist);
 	return 2;
 }
 
@@ -106,13 +110,29 @@ unsigned int drawsnakepiece(struct properties* props,
 						TILE_X, TILE_Y);
 }
 
-unsigned int placerandomfood(struct properties* props, struct foodstruct* food) {
+unsigned int placerandomfood(	struct properties* props, 
+								struct foodstruct* food,
+								struct snakestruct* snakelist) {
+	struct snakestruct* current = snakelist;
+	
 	srand(time(NULL));
 	
-	food->x = rand() % (props->x / TILE_X)+TILE_X;
-	food->y = rand() % (props->y / TILE_Y)+TILE_Y;
+	while(true) {
+		food->x = rand() % (props->x / TILE_X)+TILE_X;
+		food->y = rand() % (props->y / TILE_Y)+TILE_Y;
+		printf("x: %d, y: %d", food->x, food->y);
+		
+		// iterate over the snakelist to see if there are collisions
+		do {
+			if((food->x == snakelist->x) && (food->x == snakelist->y))
+				break;
+			snakelist = snakelist->next; // go to next element
+		} while(current != snakelist); // done when we reach the beginning
+		
+		if(current == snakelist) // iterated over the snakelist and no
+			break;				 // collisions were found
+	}
+
 	
-	// TODO: don't override snake!
-	
-	return drawrectsdl(props, FOODCOL, food->x, food->y, TILE_X, TILE_Y);
+	return drawrectsdl(props, FOODCOL, (food->x)*TILE_X, (food->y)*TILE_Y, TILE_X, TILE_Y);
 }
