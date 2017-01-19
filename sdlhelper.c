@@ -36,8 +36,8 @@ unsigned int setdrawcolor(SDL_Renderer* ren, uint32_t argb) {
  *   1: failure
 ***********************************************************************/
 unsigned int initsdl(struct properties* props) {
-	// initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+	// initialize video-, timer- and event-subsystems
+	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_EVENTS) != 0) {
 		printf("SDL_Init Error: %s\n", SDL_GetError());	
 		return 1;
 	}
