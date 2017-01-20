@@ -185,8 +185,7 @@ unsigned int tile2pixel(unsigned int tilepos) {
  * Return: uint32_t
  *   set the next timer interval
  **********************************************************************/
-uint32_t timerfunc(uint32_t interval, void *param) {	
-	if(void *param); // just to suppress the warning :)
+uint32_t timerfunc(uint32_t interval, void *param) {
 	SDL_Event event;
 	
 	event.type = SDL_USEREVENT;
