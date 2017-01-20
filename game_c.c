@@ -108,14 +108,15 @@ int game(struct properties* props) {
 					drawrectsdl(props, BACKGROUNDCOL, (props->x)/2-56, 0, 120, 16);
 				}
 			} else if(key != STATE_RUN) { // (wildcard key/state)
-				// set new direction
-				direction = key;
 				// move the snake directly when key was pressed
-				if(state == STATE_RUN) {
+				if(state == STATE_RUN && key == direction) {
 					if(movesnake(props, &snakelist, &nose, food, direction) == 1) {
 						state = STATE_QUIT;
 					}
 				}
+				
+				// set new direction
+				direction = key;
 			}
 		}
 		
@@ -222,6 +223,37 @@ unsigned int writescore(struct properties* props) {
 }
 
 /***********************************************************************
+ * checkcollision:
+ *   This function checks for collisions between the snake and a given
+ *   coordinte;
+ * Arguments:
+ *   struct snakestruct* snakelist - the whole snake
+ *   unsigned int x - X-coordinate
+ *   unsigned int y - Y-coordinate
+ * Return: unsigned int
+ *   0: success
+ *   1: failure
+ **********************************************************************/
+unsigned int checkcollision(struct snakestruct* snakelist, 
+							unsigned int x, unsigned int y) {
+	struct snakestruct* current = &snakelist[0];
+
+	do {
+		// collision detection
+		if((x == current->x) && (y == current->y)) {
+			current = &snakelist[0]; // start all over again
+			printf("Collision detected at %d %d...\n", x, y);
+			return 1;
+		}
+		
+		current = current->next; // go to next element
+	} while(current != &snakelist[0]); // done when we reach the beginning
+	
+	// successfully iterated over the list without collisions
+	return 0;
+}
+
+/***********************************************************************
  * drawplayfield:
  *   This function (re)draws the playfield without the snake.
  * Arguments:
@@ -287,30 +319,23 @@ unsigned int drawsnake(struct properties* props, struct snakestruct* snakelist) 
 unsigned int placerandomfood(struct properties* props, 
 							 struct foodstruct* food,
 							 struct snakestruct* snakelist) {
-	struct snakestruct* current = &snakelist[0];
+	//struct snakestruct* current = &snakelist[0];
+	
+	//bool fail = false;
 	
 	// some more randomness required
 	srand(time(NULL));
 	
 	while(true) {
+		//fail = false;
+		
 		// generate random coordinates
 		food->x = (rand() % ((props->x / TILE)-2))+1;
 		food->y = (rand() % ((props->y / TILE)-3))+2; // leave some space for highscore
 		
-		// iterate over the snakelist to see if there are collisions
-		do {
-			// collision detection
-			if((food->x == current->x) && (food->x == current->y)) {
-				current = &snakelist[0]; // start all over again
-				break;
-			}
-			
-			current = current->next; // go to next element
-		} while(current != &snakelist[0]); // done when we reach the beginning
-		
-		// successfully iterated over the list without collisions
-		if(current == &snakelist[0])
+		if(checkcollision(snakelist, food->x, food->y) == 0) {
 			break;
+		}
 	}
 	
 	return drawrectsdl( props, FOODCOL, tile2pixel(food->x),
@@ -323,13 +348,13 @@ unsigned int placerandomfood(struct properties* props,
  * Arguments:
  *   SDL_Event* event - the event we read the KeyPress event from
  * Return: unsigned int
- *   0: STATE_RUN: wildcard
- *   1: STATE_PAUSE: pause the game
- *   2: STATE_QUIT: quit the game
- *   3: RIGHT: 	'->' or 'D'
- *   4: LEFT:	'<-' or 'A'
- *   5: UP:		 '^' or 'W'
- *   6: DOWN	 'V' or 'S'
+ *    0: STATE_RUN: wildcard
+ *    1: STATE_PAUSE: pause the game
+ *    2: STATE_QUIT: quit the game
+ *   10: RIGHT: 	'->' or 'D'
+ *   11: LEFT:	'<-' or 'A'
+ *   12: UP:		 '^' or 'W'
+ *   13: DOWN	 'V' or 'S'
  **********************************************************************/
  unsigned int interpretkey(SDL_Event* event) {	
 	// Crtl-C
@@ -353,7 +378,7 @@ unsigned int placerandomfood(struct properties* props,
 	   		event->key.keysym.sym == SDLK_DOWN)
 		return DOWN;
 	
-	return 5;
+	return STATE_RUN;
 }
 
 /***********************************************************************
@@ -402,6 +427,11 @@ unsigned int movesnake(struct properties* props,
 		foodfield = true;
 	}
 	
+	// did we bite ourself
+	if(checkcollision(*snakelist, xpos, ypos) == 1) {
+		return 1;
+	}
+	
 	// change the current nose to body color
 	if(drawrectsdl(props, SNAKECOL_BODY, tile2pixel((*nose)->x), 
 				   tile2pixel((*nose)->y), TILE, TILE) != 0) {
@@ -448,6 +478,7 @@ unsigned int movesnake(struct properties* props,
 	if(xpos == 0 || xpos == (props->x/TILE)-1 || 
 	   ypos == 1 || ypos == (props->y/TILE)-1 || 
 	   length >= props->l) {
+		printf("Length: %d\n", length);
 		return 1;
 	}
 	

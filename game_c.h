@@ -21,10 +21,10 @@
 #define LEN_START 5 // Length of the snake at the beginning of the game
 
 // controls
-#define RIGHT 3
-#define LEFT 4
-#define UP 5
-#define DOWN 6
+#define RIGHT 10
+#define LEFT 11
+#define UP 12
+#define DOWN 13
 
 // game states
 #define STATE_RUN 0
