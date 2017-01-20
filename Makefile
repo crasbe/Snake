@@ -1,12 +1,12 @@
 CC = gcc
 CFLAGS = -Wall -std=c99 -pedantic -Wextra
-LDFLAGS = -lSDL2main -lSDL2
+LDFLAGS = -lSDL2main -lSDL2 -lSDL2_ttf
 PROGNAME = snake
 
 # specify every .c (or later .o) file as dependency
 OBJ := $(patsubst %.c,%.o,$(wildcard *.c))
 # the headers are also necessary
-HEAD = snake.h sdlhelper.h
+HEAD = snake.h sdlhelper.h game_c.h
 
 # those object are the only ones to be linked
 snake: LDOBJ = snake.o sdlhelper.o
