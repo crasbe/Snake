@@ -6,6 +6,7 @@
 int score(struct properties* props) {
 	
 	printf("Hier ist die Score-Funktion!\n");
+	printf("Score: %d\n", props->score);
 	
 	return -1;
 }
