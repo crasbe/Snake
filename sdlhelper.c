@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "snake.h"
 #include "sdlhelper.h"
@@ -36,6 +37,14 @@ unsigned int setdrawcolor(SDL_Renderer* ren, uint32_t argb) {
  *   1: failure
 ***********************************************************************/
 unsigned int initsdl(struct properties* props) {
+	// initialize TTF library
+	if(TTF_Init()==-1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
+		return 1;
+	}
+
+	
+	
 	// initialize video-, timer- and event-subsystems
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_EVENTS) != 0) {
 		printf("SDL_Init Error: %s\n", SDL_GetError());	
@@ -153,9 +162,8 @@ unsigned int addbmpsdl(struct properties* props, char* file,
  * fillallsdl:
  *   Fills the whole window with one color.
  * Arguments:
- *   struct properties* props - pointer to custom struct with window
- * 								information
- *   uint32_t argb - Alpha, Red, Green, Blue
+ *   struct properties* props - pointer to custom struct with window info
+ *   uint32_t argb - fillcolorolor: Alpha, Red, Green, Blue
  * Return:
  *   0: success
  *   1: failure
@@ -175,27 +183,13 @@ unsigned int fillallsdl(struct properties* props, uint32_t argb) {
  *   Draws a border in the window area.
  * Arguments:
  *   struct properties* props - pointer to custom struct
- *   uint32_t argb - color of the border. Alpha, Red, Green, Blue
+ *   uint32_t argb - color of the border; Alpha, Red, Green, Blue
  *   unsigned int width - width of the border
  * Return:
  *   0: success
  *   1: failure
  **********************************************************************/
 unsigned int drawbordersdl(struct properties* props, uint32_t argb, unsigned int width) {
-/*	// draw from upper left corner to lower left corner
-	drawrectsdl(props, argb, 0, 0, width, props->y);
-	
-	// draw from upper left corner to upper right corner
-	drawrectsdl(props, argb, 0, 0, props->x, width);
-	
-	// draw from lower left corner to lower right corner
-	drawrectsdl(props, argb, 0, props->y-width, props->x, width);
-	
-	// draw from upper right corner to lower right corner
-	drawrectsdl(props, argb, props->x-width, 0, width, props->y);
-
-	return 0;*/
-	
 	return drawframesdl(props, argb, width, 0, 0, props->x, props->y);
 }
 
@@ -239,7 +233,7 @@ unsigned int drawframesdl(struct properties* props, uint32_t argb, unsigned int 
  *   Draws a rectangle.
  * Arguments:
  *   struct properties* props - you've guessed it...
- *   uint32_t argb - color, Alpha, Red, Green, Blue
+ *   uint32_t argb - color; Alpha, Red, Green, Blue
  *   unsigned int xpos - X-Position
  *   unsigned int ypos - Y-Position
  *   unsigned int xsize - X-Size (width)
@@ -267,6 +261,77 @@ unsigned int drawrectsdl(struct properties* props, uint32_t argb,
 	return 0;
 }
 
+/***********************************************************************
+ * writetextsdl:
+ *   Writes a specified text to the screen.
+ * Arguments:
+ *   struct properties* props - who knows...
+ *   uint32_t argb - textcolor; Alpha, Red, Green, Blue
+ *   unsigned int xpos - X-Position of the text
+ *   unsigned int ypos - Y-Position of the text
+ *   char* font - path to the truetype (.ttf) font file
+ *   unsigned int fontsize - Fontsize
+ *   char* text: the text to write
+ * Return:
+ *   0: success
+ *   1: failure
+ **********************************************************************/
+unsigned int writetextsdl(struct properties* props, uint32_t argb,
+						unsigned int xpos, unsigned int ypos, char* fontname,
+						unsigned int fontsize, char* text) {
+	int width, height;
+	
+	// load the font
+	TTF_Font* font = TTF_OpenFont(fontname, fontsize);
+	if(font == NULL) {
+		printf("TTF_Font Error: %s\n", TTF_GetError());
+		return 1;
+	}
+	
+	// Calculate the size of the necessary box
+	if(TTF_SizeText(font, text, &width, &height) != 0) {
+		printf("TTF_SizeText Error: %s\n", TTF_GetError());
+		return 1;
+	}
+	// specify text color
+	SDL_Color color = { (argb>>16)&0xFF, (argb>>8)&0xFF, argb&0xFF, (argb>>24)&0xFF };
+	
+	// generate surface for the text
+	SDL_Surface* sur = TTF_RenderText_Solid(font, text, color);
+	if(sur == NULL) {
+		printf("TTF_RenderText_Solid Error: %s\n", TTF_GetError());
+		return 1;
+	}
+	
+	// generate texture from the surface
+	SDL_Texture* tex = SDL_CreateTextureFromSurface(props->ren, sur);
+	if(tex == NULL) {
+		printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
+		return 1;
+	}
+
+	// the surface is no longer needed
+	SDL_FreeSurface(sur);
+
+	// specify rectangle for the text
+	SDL_Rect rect;
+	rect.x = xpos;
+	rect.y = ypos;
+	rect.w = width;
+	rect.h = height;
+	
+	// render the text into the buffer
+	if(SDL_RenderCopy(props->ren, tex, NULL, &rect) != 0) {
+		printf("SDL_RenderCopy Error: %s\n", SDL_GetError());
+		return 1;
+	}
+	
+	// copy buffer onto screen
+	SDL_RenderPresent(props->ren);
+	
+	return 0;
+}
+						
 
 /***********************************************************************
  * cleanupsdl:
