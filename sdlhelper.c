@@ -331,7 +331,48 @@ unsigned int writetextsdl(struct properties* props, uint32_t argb,
 	
 	return 0;
 }
-						
+
+/***********************************************************************
+ * drawbuttonsdl:
+ *   Draw a button with text.
+ * Arguments:
+ *   struct properties* props -
+ *   unsigned int xpos - X-position
+ *   unsigned int ypos - Y-position
+ *   unsigned int xsize - X-size
+ *   unsigned int ysize - Y-size
+ *   unsigned int borderwidth - Border width
+ *   uint32_t argb - color in Alpha, Red, Green, Blue
+ *   char* text
+ *   char* fontname
+ *   unsigned int fontsize
+ * Return:
+ *   0 - success
+ *   1 - failure
+ ***********************************************************************/				
+unsigned int drawbuttonsdl(struct properties* props, 
+							unsigned int xpos, unsigned int ypos, 
+							unsigned int xsize, unsigned int ysize, 
+							unsigned int borderwidth, uint32_t argb, 
+							char* text, char* fontname, unsigned int fontsize) {
+	// draw the frame around the button
+	if(drawframesdl(props, argb, borderwidth, xpos, ypos, xpos+xsize, ypos+ysize) != 0) {
+		return 1;
+	}
+	
+	// calculate the size of the text
+	int textwidth, textheight;
+	if(TTF_SizeText(TTF_OpenFont(fontname, fontsize), text, &textwidth, &textheight) != 0) {
+		printf("TTF_SizeText Error: %s\n", TTF_GetError());
+		return 1;
+	}
+	
+	if(writetextsdl(props, argb, xpos+(xsize/2)-(textwidth/2), ypos+(ysize/2)-(textheight/2), fontname, fontsize, text) != 0) {
+		return 1;
+	}
+	
+	return 0;
+}
 
 /***********************************************************************
  * cleanupsdl:

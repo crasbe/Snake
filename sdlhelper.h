@@ -26,6 +26,11 @@ unsigned int drawframesdl(struct properties* props, uint32_t argb, unsigned int 
 unsigned int writetextsdl(struct properties* props, uint32_t argb,
 						  unsigned int xpos, unsigned int ypos,
 						  char* font, unsigned int fontsize, char* text);
+unsigned int drawbuttonsdl(struct properties* props, 
+							unsigned int xpos, unsigned int ypos, 
+							unsigned int xsize, unsigned int ysize, 
+							unsigned int borderwidth, uint32_t argb, 
+							char* text, char* fontname, unsigned int fontsize);
 void cleanupsdl(struct properties* props);
 
 
