@@ -10,9 +10,13 @@
 #include <SDL2/SDL.h>
 
 /****************************************
+ * Macros
+ ***************************************/
+#define FONT "fonts/clacon.ttf" // font to be used in the game
+
+/****************************************
  * Declaration of structures
  ****************************************/
- 
 struct properties {
 	// Window properties
 	unsigned int x;		// X-size of the window
@@ -29,7 +33,6 @@ struct properties {
 /****************************************
  * Function prototypes
  * **************************************/
-
 // The three main functions
 // Return values:
 //  * "-1": quit
