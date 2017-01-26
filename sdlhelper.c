@@ -223,7 +223,7 @@ unsigned int drawframesdl(struct properties* props, uint32_t argb, unsigned int 
 	ret += drawrectsdl(props, argb, x1, y2-width, x2-x1, width);
 	
 	// draw from upper right corner to lower right corner
-	ret += drawrectsdl(props, argb, x2-x1-width, y1, width, y2-y1);
+	ret += drawrectsdl(props, argb, x2-width, y1, width, y2-y1);
 	
 	return ret;
 }
