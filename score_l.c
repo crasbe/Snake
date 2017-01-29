@@ -2,19 +2,19 @@
 #include <stdio.h>
 #include <string.h>
 #include "snake.h"
+#include "sdlhelper.h"
 
 #define namelength 20           // max length of playername
 #define scorelistlength 1000    //max length of scorelist
-#define MAX 25 // maximum line length
+#define MAX 25                  // maximum line length
+#define SCORESSHOWN 10
 
-
-//struct properties* props; //ekeligg
 struct sScore{
     char name[namelength];
     int punkte;
 };
 
-void sort(struct sScore *highscorearray, int length){          //not tested, same as original code(score_e.c)
+void sort(struct sScore *highscorearray, int length){                                         //not tested, same as original code(score_e.c)
     struct sScore tmp;
     for (int i = 0; i < length - 1; ++i){
 
@@ -28,9 +28,7 @@ void sort(struct sScore *highscorearray, int length){          //not tested, sam
     }
 }
 
-void writeData(struct sScore *highscorearray, int length, FILE* highscorefile){      //works well
-    //FILE *Fhighscore;
-    //Fhighscore = fopen("highscore_l.txt", "w");      //path is incorrect
+void writeData(struct sScore *highscorearray, int length, FILE* highscorefile){              //works well
     for (int i = 0;i < length;i++){
         fprintf(highscorefile,"%i:",highscorearray[i].punkte);
         fprintf(highscorefile,"%s \n",highscorearray[i].name);
@@ -39,38 +37,22 @@ void writeData(struct sScore *highscorearray, int length, FILE* highscorefile){ 
     rewind(highscorefile);
 }
 
-void readData(struct sScore *highscorearray, FILE *highscorefile){       //the problem ist to read the data
-
-    //FILE* Fhighscore;
+void readData(struct sScore *highscorearray, FILE *highscorefile){                           //the problem ist to read the data
     char line[MAX];
     int count = 0;
 
-    //Fhighscore = fopen("highscore_l.txt", "r");      //path is incorrect
-
     while (fgets(line, MAX, highscorefile) !=0){
-        //fscanf(highscorefile,"%i:%s",&highscorearray[count].punkte,highscorearray[count].name);
         sscanf(line, "%i:%s",&highscorearray[count].punkte, highscorearray[count].name);
         count++;
     }
-    //fclose(Fhighscore);
-    //for (int i=0;i<length;i++){                                                 //tool to test the funktion
-    //    printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
-    //}
 
     rewind(highscorefile); // back to start
 
   }
 
-
-int countScores(FILE *highscorefile){              //works well
-
-    //FILE* Fhighscore;
-
+int countScores(FILE *highscorefile){                                                       //works well
     int count = 0;
     char line[scorelistlength];
-
-
-    //Fhighscore = fopen("highscore_l.txt", "r");      //path is incorrect
 
     if (!highscorefile){
         printf("Could not open highscore \n" );
@@ -81,38 +63,74 @@ int countScores(FILE *highscorefile){              //works well
         count++;
     }
 
-    printf("%i\n",count);           // only for testing
-
     rewind(highscorefile); // put curser back to start
 
     return count;
 }
 
-void writenewscore(struct sScore *highscorearray,char *Name, int length, int newscore){   // dont know couse of problems with the r/w functions
+void writenewscore(struct sScore *highscorearray,char *Name, int length, int newscore){     // dont know couse of problems with the r/w functions
     highscorearray[length -1].punkte = newscore;
     strcpy(highscorearray[length -1].name,Name);
 
     sort(highscorearray, length+1);
 }
 
-//int main(int argc, const char * argv[]) {
+unsigned int drawscore(struct properties* props, unsigned int highbutton) {                 //copyed and modified
+	char text[20];
+
+	// draw background color over the variable texts of length and velocity, might be replaced by other grafik
+	drawrectsdl(props, 0xFFFFFFFF, BT_XPOS+BT_XPART+BT_FRAMEWIDTH, BT_LEN_YPOS+BT_FRAMEWIDTH, BT_XSIZE-2*BT_XPART-2*BT_FRAMEWIDTH, BT_YSIZE-2*BT_FRAMEWIDTH);
+	drawrectsdl(props, 0xFFFFFFFF, BT_XPOS+BT_XPART+BT_FRAMEWIDTH, BT_VEL_YPOS+BT_FRAMEWIDTH, BT_XSIZE-2*BT_XPART-2*BT_FRAMEWIDTH, BT_YSIZE-2*BT_FRAMEWIDTH);
+
+    for(int i=0;i<SCORESSHOWN;i++){
+        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, *char highscorearray[i].name)
+        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, *char highscorearray[i].punkte)
+    }
+
+
+	// back to menue button
+	drawbuttonsdl(props, BT_XPOS, BT_QUIT_YPOS, BT_XSIZE, BT_YSIZE, BT_FRAMEWIDTH, (highbutton == BT_QUIT ? BT_COLOR_HIGH : BT_COLOR), "back to menue", FONT, BT_FONTSIZE);
+
+	return 0;
+}
+
+unsigned int xy2button(struct properties* props, int x, int y) {                            //copyed and modified
+	if(x < 0 || y < 0) {
+		return BT_NONE;
+	}
+	unsigned int ux = (unsigned int)x;
+	unsigned int uy = (unsigned int)y;
+
+	// if the coordinates are out of the button field, no button has been clicked on
+	if(ux < BT_XPOS || ux > BT_XPOS+BT_XSIZE ||
+	   uy < BT_START_YPOS || uy > BT_QUIT_YPOS+BT_YSIZE) {
+		return BT_NONE;
+	} else if(uy >= BT_QUIT_YPOS && uy <= BT_QUIT_YPOS+BT_YSIZE) {
+		return BT_QUIT;
+	} else {
+		printf("Error: wrong button coordinates!\n");
+	}
+	return BT_NONE;
+
+}
+
+
 int score(struct properties* props) {
 	FILE *highscorefile = fopen("highscore_l.txt", "r+");
 
 
     char Name[namelength];
     int length;
-    //props = (struct properties*)malloc(sizeof(struct properties));
-    props->score = 20;                  // need the real score form game.c
+    props->score = 20;                                                                      // need the real score form game.c
     printf("Enter your name:  ");
     scanf("%s",Name);
 
     length = countScores(highscorefile) +1;
     if (length < 0){        // if the file could not be open end funktion
+        printf("highscorefile isnt there");
         return -1;
     }
 
-    //struct sScore highscorearray[length+2];
     struct sScore* highscorearray;
     highscorearray = (struct sScore*)malloc((length)*sizeof(struct sScore));
 
@@ -120,10 +138,67 @@ int score(struct properties* props) {
     writenewscore(highscorearray, Name,length, props->score);
     writeData(highscorearray, length, highscorefile);
 
-    for (int i=0;i<length;i++){                                                 //tool to test the funktion
-		printf("%s %d \n",highscorearray[i].name,highscorearray[i].punkte);
-    }
+    props->v = 250;
+	props->l = 100;
 
-   return -1;
+    SDL_Event event;
+	unsigned int state = STATE_RUN;
+	//unsigned int ret = 0;
+	unsigned int button = BT_NONE;
+
+	// draw the buttons
+	drawscore()(props, BT_NONE);
+
+	while(state == STATE_RUN) {
+		// wait for an event. this saves CPU load
+		if(SDL_WaitEvent(&event) != 1) {
+			printf("SDL_WaitEvent Error: %s", SDL_GetError());
+			return -1;
+		}
+
+		// SDL window housekeeping...
+		if(event.type == SDL_WINDOWEVENT) {
+			// After minimizing and maximizing again, the window has to be redrawn
+			if(event.window.event == SDL_WINDOWEVENT_EXPOSED) {
+				// redraw everything
+			} else if(event.window.event == SDL_WINDOWEVENT_CLOSE) { // someone pressed the X-button
+				state = STATE_QUIT;
+				continue; // don't do anything else after this
+			}
+		}
+
+		// react to Ctrl-C
+		if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_c) {
+			if((SDL_GetModState() & KMOD_CTRL) == KMOD_RCTRL ||
+				(SDL_GetModState() & KMOD_CTRL) == KMOD_LCTRL) {
+					state = STATE_QUIT;
+					continue; // don't do anything else after this
+			}
+		}
+
+		// Mouse actions
+		if(event.type == SDL_MOUSEBUTTONDOWN) {
+			int x, y;
+			if(SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+				button = xy2button(props, x, y);
+				printf("Button: %d\n", button);
+				drawallbuttons(props, button); // highlight the button, but do nothing yet
+			}
+		}
+		if(event.type == SDL_MOUSEBUTTONUP) {
+			// when the mousebutton lifted do something
+			switch(button) {
+				case BT_QUIT: 	state = STATE_QUIT; break;
+
+			}
+			drawallbuttons(props, BT_NONE);
+			continue;
+		}
+	}
+
+	if(state == STATE_QUIT) {
+		return 1;                                          /*return 1 if highscore is closed in normal way and everithing was working well */
+	}
+return -1;
 
 }
