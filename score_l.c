@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 #include "snake.h"
 #include "sdlhelper.h"
-#include "game_c.h"
+#include "menu_c.h"
 
 #define namelength 20           // max length of playername
 #define scorelistlength 1000    //max length of scorelist
