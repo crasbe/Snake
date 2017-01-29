@@ -303,6 +303,9 @@ unsigned int writetextsdl(struct properties* props, uint32_t argb,
 		return 1;
 	}
 	
+	// Font is not needed anymore
+	TTF_CloseFont(font);
+	
 	// generate texture from the surface
 	SDL_Texture* tex = SDL_CreateTextureFromSurface(props->ren, sur);
 	if(tex == NULL) {
@@ -362,10 +365,14 @@ unsigned int drawbuttonsdl(struct properties* props,
 	
 	// calculate the size of the text
 	int textwidth, textheight;
-	if(TTF_SizeText(TTF_OpenFont(fontname, fontsize), text, &textwidth, &textheight) != 0) {
+	
+	TTF_Font *fontpointer = TTF_OpenFont(fontname, fontsize);
+	
+	if(TTF_SizeText(fontpointer, text, &textwidth, &textheight) != 0) {
 		printf("TTF_SizeText Error: %s\n", TTF_GetError());
 		return 1;
 	}
+	TTF_CloseFont(fontpointer);
 	
 	if(writetextsdl(props, argb, xpos+(xsize/2)-(textwidth/2), ypos+(ysize/2)-(textheight/2), fontname, fontsize, text) != 0) {
 		return 1;

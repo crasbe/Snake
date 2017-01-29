@@ -60,7 +60,7 @@ int menu(struct properties* props) {
 			int x, y;
 			if(SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
 				button = xy2button(props, x, y);
-				printf("Button: %d\n", button);
+				//printf("Button: %d\n", button);
 				drawallbuttons(props, button); // highlight the button, but do nothing yet
 			}
 		}
@@ -70,10 +70,14 @@ int menu(struct properties* props) {
 				case BT_QUIT: 	state = STATE_QUIT; break;
 				case BT_SCORE:	state = STATE_SCORE; break;
 				case BT_START:	state = STATE_GAME; break;
-				case BT_VEL_INC: props->v += VEL_STEP; break;
-				case BT_VEL_DEC: props->v -= VEL_STEP; break;
-				case BT_LEN_INC: props->l += LEN_STEP; break;
-				case BT_LEN_DEC: props->l -= LEN_STEP; break;
+				case BT_VEL_INC: if(props->v >= 1000-VEL_STEP) break;
+								 props->v += VEL_STEP; break;
+				case BT_VEL_DEC: if(props->v <= VEL_STEP) break;
+								 props->v -= VEL_STEP; break;
+				case BT_LEN_INC: if(props->l >= 500) break;
+								 props->l += LEN_STEP; break;
+				case BT_LEN_DEC: if(props->l <= LEN_STEP) break;
+								 props->l -= LEN_STEP; break;
 			}
 			drawallbuttons(props, BT_NONE);
 			continue;
