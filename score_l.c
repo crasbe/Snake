@@ -85,8 +85,9 @@ unsigned int drawscore(struct properties* props, unsigned int highbutton, struct
 	drawrectsdl(props, 0xFFFFFFFF, BT_XPOS+BT_XPART+BT_FRAMEWIDTH, BT_VEL_YPOS+BT_FRAMEWIDTH, BT_XSIZE-2*BT_XPART-2*BT_FRAMEWIDTH, BT_YSIZE-2*BT_FRAMEWIDTH);
 
     for(int i=0;i<SCORESSHOWN;i++){
-        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, *char highscorearray[i].name);
-        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, *char highscorearray[i].punkte);
+        char score = highscorearray[i].punkte;
+        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10,  highscorearray[i].name);
+        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10,  &score);
     }
 
 
@@ -96,7 +97,7 @@ unsigned int drawscore(struct properties* props, unsigned int highbutton, struct
 	return 0;
 }
 
-unsigned int xy2button(struct properties* props, int x, int y) {                            //copyed and modified
+unsigned int xy2buttons(struct properties* props, int x, int y) {                            //copyed and modified
 	if(x < 0 || y < 0) {
 		return BT_NONE;
 	}
@@ -182,7 +183,7 @@ int score(struct properties* props) {
 		if(event.type == SDL_MOUSEBUTTONDOWN) {
 			int x, y;
 			if(SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-				button = xy2button(props, x, y);
+				button = xy2buttons(props, x, y);
 				printf("Button: %d\n", button);
 				drawallbuttons(props, button); // highlight the button, but do nothing yet
 			}
