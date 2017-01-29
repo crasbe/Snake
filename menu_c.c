@@ -19,6 +19,9 @@ int menu(struct properties* props) {
 	//unsigned int ret = 0;
 	unsigned int button = BT_NONE;
 	
+	// fill everything with background color
+	fillallsdl(props, 0xFFFFFFFF);
+	
 	// draw the logo in the center of the frame
 	addbmpsdl(props, "img/snake.bmp", ((props->x)/2)-(256/2), 0, 256, 256);
 	
@@ -82,6 +85,7 @@ int menu(struct properties* props) {
 	} else if(state == STATE_GAME) {
 		return 1;
 	} else if(state == STATE_SCORE) {
+		props->score = 0; // no highscorescore reached
 		return 2;
 	}
 	return 1;
