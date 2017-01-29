@@ -79,15 +79,14 @@ void writenewscore(struct sScore *highscorearray,char *Name, int length, int new
 }
 
 unsigned int drawscore(struct properties* props, unsigned int highbutton) {                 //copyed and modified
-	char text[20];
 
 	// draw background color over the variable texts of length and velocity, might be replaced by other grafik
 	drawrectsdl(props, 0xFFFFFFFF, BT_XPOS+BT_XPART+BT_FRAMEWIDTH, BT_LEN_YPOS+BT_FRAMEWIDTH, BT_XSIZE-2*BT_XPART-2*BT_FRAMEWIDTH, BT_YSIZE-2*BT_FRAMEWIDTH);
 	drawrectsdl(props, 0xFFFFFFFF, BT_XPOS+BT_XPART+BT_FRAMEWIDTH, BT_VEL_YPOS+BT_FRAMEWIDTH, BT_XSIZE-2*BT_XPART-2*BT_FRAMEWIDTH, BT_YSIZE-2*BT_FRAMEWIDTH);
 
     for(int i=0;i<SCORESSHOWN;i++){
-        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, char highscorearray[i].name)
-        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, char highscorearray[i].punkte)
+        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, char highscorearray[i].name);
+        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, char highscorearray[i].punkte);
     }
 
 
@@ -150,7 +149,7 @@ int score(struct properties* props) {
 	unsigned int button = BT_NONE;
 
 	// draw the buttons
-	drawscore()(props, BT_NONE);
+	drawscore(props, BT_NONE);
 
 	while(state == STATE_RUN) {
 		// wait for an event. this saves CPU load
