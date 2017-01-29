@@ -86,7 +86,7 @@ unsigned int drawscore(struct properties* props, unsigned int highbutton) {     
 
     for(int i=0;i<SCORESSHOWN;i++){
         writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, highscorearray[i].name);
-        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, char highscorearray[i].punkte);
+        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10, highscorearray[i].punkte);
     }
 
 
