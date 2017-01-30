@@ -127,6 +127,7 @@ int score(struct properties* props) {
     props->score = 20;                                                                      // need the real score form game.c
     //printf("Enter your name:  ");
     //scanf("%s",Name);
+SDL_Event event;
 
     if(event.type == SDL_KEYDOWN) {
 			if(event.key.keysym.sym == SDLK_c) {
@@ -173,7 +174,7 @@ int score(struct properties* props) {
     props->v = 250;
 	props->l = 100;
 
-    SDL_Event event;
+
 	unsigned int state = STATE_RUN;
 	//unsigned int ret = 0;
 	unsigned int button = BT_NONE;
