@@ -80,14 +80,14 @@ void writenewscore(struct sScore *highscorearray,char *Name, int length, int new
 
 unsigned int drawscore(struct properties* props, unsigned int highbutton, struct sScore *highscorearray) {                 //copyed and modified
 
-	// draw background color over the variable texts of length and velocity, might be replaced by other grafik
-	drawrectsdl(props, 0xFFFFFFFF, BT_XPOS+BT_XPART+BT_FRAMEWIDTH, BT_LEN_YPOS+BT_FRAMEWIDTH, BT_XSIZE-2*BT_XPART-2*BT_FRAMEWIDTH, BT_YSIZE-2*BT_FRAMEWIDTH);
-	drawrectsdl(props, 0xFFFFFFFF, BT_XPOS+BT_XPART+BT_FRAMEWIDTH, BT_VEL_YPOS+BT_FRAMEWIDTH, BT_XSIZE-2*BT_XPART-2*BT_FRAMEWIDTH, BT_YSIZE-2*BT_FRAMEWIDTH);
+	fillallsdl(props, 0xFFFFFFFF);
 
     for(int i=0;i<SCORESSHOWN;i++){
         char score = highscorearray[i].punkte;
-        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10,  highscorearray[i].name);
-        writetextsdl(props, 0, (props->x)-48, -1+0.15*i, FONT, 10,  &score);
+        writetextsdl(props, 0xFF000000, 50, 76+32*i, FONT, 30,  highscorearray[i].name);
+        writetextsdl(props, 0xFF000000, 550, 76+32*i, FONT, 30,  &score);
+
+
     }
 
 
@@ -125,8 +125,37 @@ int score(struct properties* props) {
     char Name[namelength];
     int length;
     props->score = 20;                                                                      // need the real score form game.c
-    printf("Enter your name:  ");
-    scanf("%s",Name);
+    //printf("Enter your name:  ");
+    //scanf("%s",Name);
+
+    if(event.type == SDL_KEYDOWN) {
+			if(event.key.keysym.sym == SDLK_c) {
+				if((SDL_GetModState() & KMOD_CTRL) == KMOD_RCTRL ||
+					(SDL_GetModState() & KMOD_CTRL) == KMOD_LCTRL) {
+						state = STATE_QUIT;
+						continue; // don't do anything else after this
+				}
+			}
+				if(event.key.keysym.sym >= 'a' && event.key.keysym.sym <= 'z') {
+					printf("Entered char: %c\n", event.key.keysym.sym);
+					if(newname < MAX_NAME) {
+						// add new character to name array and write new name to screen
+						if(newname == 0) {
+							Name = (char)event.key.keysym.sym;
+						} else {
+							sprintf(Name, "%s%c", Name, (char)event.key.keysym.sym);
+						}
+						writetextsdl(props, 0xFF000000, 265, 226, FONT, 32, Name);
+
+						newname++;
+					}
+				} else if(event.key.keysym.sym == SDLK_BACKSPACE) {
+					// draw white rectangle over the text
+					drawrectsdl(props, 0xFFFFFFFF, 265, 226, 199, 34);
+
+
+
+
 
     length = countScores(highscorefile) +1;
     if (length < 0){        // if the file could not be open end funktion
@@ -170,14 +199,6 @@ int score(struct properties* props) {
 			}
 		}
 
-		// react to Ctrl-C
-		if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_c) {
-			if((SDL_GetModState() & KMOD_CTRL) == KMOD_RCTRL ||
-				(SDL_GetModState() & KMOD_CTRL) == KMOD_LCTRL) {
-					state = STATE_QUIT;
-					continue; // don't do anything else after this
-			}
-		}
 
 		// Mouse actions
 		if(event.type == SDL_MOUSEBUTTONDOWN) {
@@ -200,7 +221,7 @@ int score(struct properties* props) {
 	}
 
 	if(state == STATE_QUIT) {
-		return 1;                                          /*return 1 if highscore is closed in normal way and everithing was working well */
+		return 0;                                          /*return 1 if highscore is closed in normal way and everithing was working well */
 	}
 return -1;
 
