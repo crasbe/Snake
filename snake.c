@@ -33,8 +33,10 @@ int main(void) {
 			nextop = game(props);
 		else if(nextop == 2)
 			nextop = score(props);
-		else
+		else {
 			printf("Illegal return value in main loop: %d!\n", nextop);
+			break;
+		}
 	}
 
 	cleanupsdl(props);
